@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Crédito Autopromoción</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f3;
+      color: #1a1a18;
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #888780;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.5rem 0 0.6rem;
+    }
+
+    .card {
+      background: #fff;
+      border: 0.5px solid rgba(0,0,0,0.12);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 0.5px solid rgba(0,0,0,0.08);
+      font-size: 14px;
+    }
+    .row:last-child { border-bottom: none; }
+    .rl { color: #5f5e5a; }
+    .rv { font-weight: 500; }
+
+    .mgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 0.75rem;
+    }
+
+    .mc {
+      background: #f1efe8;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+    }
+    .ml { font-size: 12px; color: #888780; margin-bottom: 3px; }
+    .mv { font-size: 18px; font-weight: 500; }
+
+    .sl-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0.5rem 0;
+    }
+    .sl-label {
+      font-size: 13px;
+      color: #5f5e5a;
+      min-width: 150px;
+    }
+    .sl-val {
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 65px;
+      text-align: right;
+    }
+
+    input[type=range] {
+      flex: 1;
+      accent-color: #1D9E75;
+      cursor: pointer;
+    }
+
+    .result {
+      background: #E1F5EE;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.75rem;
+    }
+    .rt { font-size: 13px; color: #0F6E56; font-weight: 500; margin-bottom: 4px; }
+    .rv2 { font-size: 30px; font-weight: 500; color: #085041; }
+    .rr { font-size: 13px; color: #0F6E56; margin-top: 3px; }
+
+    .warn {
+      background: #FAEEDA;
+      border-radius: 10px;
+      padding: 0.8rem 1.25rem;
+      margin-top: 0.6rem;
+      font-size: 13px;
+      color: #633806;
+    }
+
+    .neg { color: #D85A30; }
+    .pos { color: #1D9E75; }
+
+    .diff-pill {
+      display: inline-block;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .diff-up { background: #E1F5EE; color: #0F6E56; }
+    .diff-dn { background: #FCEBEB; color: #A32D2D; }
+
+    .div-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-warn { background: #FAEEDA; color: #633806; }
+    .badge-ok   { background: #E1F5EE; color: #085041; }
+
+    .footer-note {
+      font-size: 12px;
+      color: #b4b2a9;
+      margin-top: 1.25rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 480px) {
+      .sl-label { min-width: 110px; font-size: 12px; }
+      .sl-val   { min-width: 55px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Simulador crédito autopromoción</h1>
+  <p class="subtitle">Bianca + pareja · Ingresos conjuntos 198.000 € brutos/año</p>
+
+  <!-- INGRESOS -->
+  <div class="section-title">Ingresos</div>
+  <div class="card">
+    <div class="row">
+      <span class="rl">Bianca — dividendos (bruto)</span>
+      <span class="rv">90.000 €</span>
+    </div>
+    <div class="sl-row" style="margin: 6px 0 2px;">
+      <span class="sl-label" style="font-size:12px; color:#888780;">% computado por el banco</span>
+      <input type="range" id="divpct" min="50" max="100" step="5" value="100">
+      <span class="sl-val" id="divpct-out">100%</span>
+    </div>
+    <div class="row">
+      <span class="rl" style="font-size:13px;">Dividendos computados</span>
+      <span class="rv" id="div-computed" style="font-size:13px;">90.000 €/año</span>
+    </div>
+    <div class="row"><span class="rl">Bianca — salario</span><span class="rv">53.000 €</span></div>
+    <div class="row"><span class="rl">Tu salario</span><span class="rv">55.000 €</span></div>
+    <div class="row">
+      <span class="rl" style="font-weight:500;">Total bruto computado</span>
+      <span class="rv pos" id="total-bruto">198.000 €/año</span>
+    </div>
+  </div>
+
+  <!-- DEUDAS -->
+  <div class="section-title">Deudas actuales</div>
+  <div class="card">
+    <div class="sl-row">
+      <span class="sl-label">Hipoteca actual</span>
+      <input type="range" id="hip" min="0" max="1500" step="50" value="500">
+      <span class="sl-val" id="hip-out">500 €</span>
+    </div>
+    <div class="sl-row">
+      <span class="sl-label">Otros préstamos</span>
+      <input type="range" id="otros" min="0" max="1500" step="50" value="600">
+      <span class="sl-val" id="otros-out">600 €</span>
+    </div>
+    <div class="row" style="margin-top:6px;">
+      <span class="rl" style="font-weight:500;">Total deudas/mes</span>
+      <span class="rv neg" id="total-deuda">1.100 €</span>
+    </div>
+    <div class="row">
+      <span class="rl">vs. base (1.100 €)</span>
+      <span class="rv" id="diff-deuda">base</span>
+    </div>
+  </div>
+
+  <!-- PARÁMETROS -->
+  <div class="section-title">Parámetros del préstamo</div>
+  <div class="card">
+    <div class="sl-row">
+      <span class="sl-label">Plazo (años)</span>
+      <input type="range" id="plazo" min="10" max="30" step="5" value="25">
+      <span class="sl-val" id="plazo-out">25 años</span>
+    </div>
+    <div class="sl-row">
+      <span class="sl-label">Tipo interés</span>
+      <input type="range" id="tipo" min="2.5" max="5.5" step="0.25" value="3.5">
+      <span class="sl-val" id="tipo-out">3.50%</span>
+    </div>
+    <div class="sl-row">
+      <span class="sl-label">% neto s/bruto</span>
+      <input type="range" id="netpct" min="55" max="70" step="1" value="63">
+      <span class="sl-val" id="netpct-out">63%</span>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="section-title">Resumen</div>
+  <div class="mgrid">
+    <div class="mc"><div class="ml">Neto mensual est.</div><div class="mv" id="net-m">—</div></div>
+    <div class="mc"><div class="ml">Máx. cuota total (35%)</div><div class="mv" id="max-q">—</div></div>
+    <div class="mc"><div class="ml">Cuota disponible</div><div class="mv pos" id="avail-q">—</div></div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result">
+    <div class="rt">
+      Crédito nuevo estimado
+      <span class="div-badge badge-ok" id="div-badge">dividendos al 100%</span>
+    </div>
+    <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+      <span class="rv2" id="credit-val">—</span>
+      <span class="diff-pill" id="credit-diff" style="display:none;"></span>
+    </div>
+    <div class="rr" id="credit-range">—</div>
+    <div style="margin-top:8px; font-size:12px; color:#0F6E56;" id="div-impact"></div>
+  </div>
+
+  <div class="warn" id="warn" style="display:none;">
+    ⚠ Las deudas actuales consumen más del 50% del ratio. El margen puede ser más ajustado en algunas entidades.
+  </div>
+
+  <p class="footer-note">
+    Cálculo orientativo. Ratio 35% sobre neto estimado. Los dividendos pueden computarse al 50–100%
+    según historial y criterio del banco. No sustituye asesoramiento financiero profesional.
+  </p>
+
+</div>
+
+<script>
+  const BASE_DEUDA = 1100;
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('es-ES') + ' €';
+  }
+
+  function calcMaxLoan(cuota, rate, years) {
+    const r = rate / 12 / 100;
+    const n = years * 12;
+    if (r === 0) return cuota * n;
+    return cuota * (Math.pow(1 + r, n) - 1) / (r * Math.pow(1 + r, n));
+  }
+
+  let prevCredit = null;
+
+  function update() {
+    const divpct = parseInt(document.getElementById('divpct').value);
+    const hip    = parseInt(document.getElementById('hip').value);
+    const otros  = parseInt(document.getElementById('otros').value);
+    const plazo  = parseInt(document.getElementById('plazo').value);
+    const tipo   = parseFloat(document.getElementById('tipo').value);
+    const netpct = parseInt(document.getElementById('netpct').value);
+
+    document.getElementById('divpct-out').textContent = divpct + '%';
+    document.getElementById('hip-out').textContent    = hip.toLocaleString('es-ES') + ' €';
+    document.getElementById('otros-out').textContent  = otros.toLocaleString('es-ES') + ' €';
+    document.getElementById('plazo-out').textContent  = plazo + ' años';
+    document.getElementById('tipo-out').textContent   = tipo.toFixed(2) + '%';
+    document.getElementById('netpct-out').textContent = netpct + '%';
+
+    // Ingresos
+    const divBruto     = 90000;
+    const divComputado = divBruto * divpct / 100;
+    const totalBruto   = divComputado + 53000 + 55000;
+
+    document.getElementById('div-computed').textContent = fmt(divComputado) + '/año';
+    document.getElementById('total-bruto').textContent  = fmt(totalBruto) + '/año';
+
+    const badge = document.getElementById('div-badge');
+    badge.textContent = 'dividendos al ' + divpct + '%';
+    badge.className   = 'div-badge ' + (divpct >= 70 ? 'badge-ok' : 'badge-warn');
+
+    // Deudas
+    const totalDeuda = hip + otros;
+    document.getElementById('total-deuda').textContent = fmt(totalDeuda);
+
+    const diffDeuda = totalDeuda - BASE_DEUDA;
+    const ddEl = document.getElementById('diff-deuda');
+    if (diffDeuda === 0) {
+      ddEl.textContent  = 'base';
+      ddEl.style.color  = '#888780';
+    } else if (diffDeuda < 0) {
+      ddEl.textContent  = '− ' + fmt(Math.abs(diffDeuda)) + '/mes';
+      ddEl.style.color  = '#1D9E75';
+    } else {
+      ddEl.textContent  = '+ ' + fmt(diffDeuda) + '/mes';
+      ddEl.style.color  = '#D85A30';
+    }
+
+    // Capacidad
+    const netMonth = totalBruto * (netpct / 100) / 12;
+    const maxQ     = netMonth * 0.35;
+    const availQ   = Math.max(0, maxQ - totalDeuda);
+
+    document.getElementById('net-m').textContent  = fmt(netMonth) + '/mes';
+    document.getElementById('max-q').textContent  = fmt(maxQ) + '/mes';
+    document.getElementById('avail-q').textContent = fmt(availQ) + '/mes';
+
+    // Crédito
+    const credit = calcMaxLoan(availQ, tipo, plazo);
+    const low    = calcMaxLoan(availQ * 0.9, Math.min(tipo + 0.5, 5.5), Math.max(plazo - 5, 10));
+    const high   = calcMaxLoan(availQ,       Math.max(tipo - 0.5, 2),   Math.min(plazo + 5, 30));
+
+    document.getElementById('credit-val').textContent   = fmt(Math.round(credit / 1000) * 1000);
+    document.getElementById('credit-range').textContent =
+      'Rango: ' + fmt(Math.round(low / 1000) * 1000) + ' – ' + fmt(Math.round(high / 1000) * 1000);
+
+    // Impacto dividendos
+    if (divpct < 100) {
+      const availQ100    = Math.max(0, (totalBruto + divBruto * (1 - divpct / 100)) * (netpct / 100) / 12 * 0.35 - totalDeuda);
+      const credit100    = calcMaxLoan(availQ100, tipo, plazo);
+      const perdida      = credit100 - credit;
+      document.getElementById('div-impact').textContent =
+        'Al 100% de dividendos serían ~' + fmt(Math.round(credit100 / 1000) * 1000) +
+        ' (' + fmt(Math.round(perdida / 1000) * 1000) + ' más)';
+    } else {
+      document.getElementById('div-impact').textContent = '';
+    }
+
+    // Pill de diferencia
+    const diffEl = document.getElementById('credit-diff');
+    if (prevCredit !== null) {
+      const d = credit - prevCredit;
+      if (Math.abs(d) > 500) {
+        diffEl.style.display = 'inline-block';
+        diffEl.textContent   = (d > 0 ? '▲ +' : '▼ ') + fmt(Math.round(Math.abs(d) / 1000) * 1000);
+        diffEl.className     = 'diff-pill ' + (d > 0 ? 'diff-up' : 'diff-dn');
+      } else {
+        diffEl.style.display = 'none';
+      }
+    }
+    prevCredit = credit;
+
+    // Warning ratio
+    document.getElementById('warn').style.display = (totalDeuda / maxQ > 0.5) ? 'block' : 'none';
+  }
+
+  ['divpct', 'hip', 'otros', 'plazo', 'tipo', 'netpct'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
+  });
+
+  update();
+</script>
+</body>
+</html>

@@ -1,1 +1,128 @@
-{}
+{
+  "credito": {
+    "inputs": {
+      "divpct": "100",
+      "hip": "500",
+      "otros": "600",
+      "plazo": "25",
+      "tipo": "3.5",
+      "netpct": "63"
+    }
+  },
+  "montsoriu": {
+    "inputs": {
+      "b-v0-m2": "200",
+      "b-v0-eur": "3000",
+      "b-v1-m2": "30",
+      "b-v1-eur": "3000",
+      "b-por-m2": "20",
+      "b-por-eur": "1500",
+      "b-gar-m2": "30",
+      "b-gar-eur": "2000",
+      "b-pis-m2": "30",
+      "b-pis-eur": "1500",
+      "b-urb": "50000",
+      "h-arq": "90000",
+      "h-do-meses": "18",
+      "h-do-rate": "1500",
+      "h-visado": "1000",
+      "h-at": "30000",
+      "h-ctrl": "0",
+      "t-lic": "10000",
+      "t-not": "5000",
+      "t-cont": "2000",
+      "extra-mob": "30000",
+      "extra-jard": "50000",
+      "extra-tex": "20000",
+      "divpct": "85",
+      "sal-bianca": "0",
+      "sal-tu": "55000",
+      "aut-base": "0",
+      "aut-years": "2",
+      "aut-pct": "80",
+      "alq-mensual": "0",
+      "alq-mode": "70",
+      "hip": "0",
+      "otros": "0",
+      "plazo": "25",
+      "tipo": "3.5",
+      "netpct": "63",
+      "terreno": "60000",
+      "gastos-hechos": "0",
+      "bank-base-mode": "excl-terreno",
+      "bank-pct": "90",
+      "aporte-inicial": "100000"
+    }
+  },
+  "cronograma": {
+    "inputs": {
+      "sl-savings": "1500"
+    },
+    "incomes": [
+      {
+        "id": 1,
+        "month": "2026-08",
+        "desc": "Bonus Brasil 1/4",
+        "amount": 6000,
+        "forDebt": true
+      },
+      {
+        "id": 2,
+        "month": "2026-09",
+        "desc": "Bonus Brasil 2/4",
+        "amount": 6000,
+        "forDebt": true
+      },
+      {
+        "id": 3,
+        "month": "2026-10",
+        "desc": "Bonus Brasil 3/4",
+        "amount": 6000,
+        "forDebt": true
+      },
+      {
+        "id": 4,
+        "month": "2026-11",
+        "desc": "Bonus Brasil 4/4",
+        "amount": 6000,
+        "forDebt": true
+      },
+      {
+        "id": 5,
+        "month": "2026-11",
+        "desc": "Venta inmueble",
+        "amount": 35000,
+        "forDebt": true
+      },
+      {
+        "id": 6,
+        "month": "2026-12",
+        "desc": "Evento MCA",
+        "amount": 30000,
+        "forDebt": true
+      },
+      {
+        "id": 7,
+        "month": "2027-01",
+        "desc": "Entrada adicional Lavoro",
+        "amount": 10000,
+        "forDebt": true
+      },
+      {
+        "id": 8,
+        "month": "2026-12",
+        "desc": "Bonus Lavoro",
+        "amount": 25000,
+        "forDebt": true
+      },
+      {
+        "id": 9,
+        "month": "2027-08",
+        "desc": "Bonus Lavoro",
+        "amount": 25000,
+        "forDebt": true
+      }
+    ],
+    "nextId": 10
+  }
+}

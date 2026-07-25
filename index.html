@@ -240,6 +240,39 @@ select:focus{outline:none;border-color:#1D9E75}
     </div>
   </div>
 
+  <!-- ══ 8 · COBERTURA DEL APORTE ══ -->
+  <div class="st">8 · Cómo cubres el aporte propio <span class="st-sub">el piso como colateral no genera efectivo</span></div>
+  <div class="card">
+    <div class="row" style="padding-bottom:10px"><span class="rl" style="font-weight:500;color:#1a1a18">Aporte necesario</span><span class="rv neg" id="ap-necesario" style="font-size:17px">—</span></div>
+
+    <div class="sl" style="margin-top:6px"><span class="sl-l">Ahorro disponible al firmar</span><input type="range" id="ahorro" min="0" max="400000" step="5000" value="60000"><span class="sl-v" id="ahorro-o">60.000 €</span></div>
+
+    <div style="display:flex;align-items:center;gap:11px;margin-top:14px;padding-top:11px;border-top:.5px solid rgba(0,0,0,.07)">
+      <input type="checkbox" id="vender">
+      <label for="vender" style="font-size:13.5px;font-weight:500;flex:1;cursor:pointer">Vender el piso de Barcelona</label>
+    </div>
+    <div id="vender-box" style="display:none;padding-left:29px;margin-top:6px">
+      <div class="sl"><span class="sl-l">Precio de venta real</span><input type="range" id="venta-precio" min="120000" max="500000" step="5000" value="260000"><span class="sl-v" id="venta-precio-o">260.000 €</span></div>
+      <div class="sl"><span class="sl-l">Gastos e impuestos de venta</span><input type="range" id="venta-gastos" min="0" max="25" step="1" value="10"><span class="sl-v" id="venta-gastos-o">10%</span></div>
+      <div class="row"><span class="rl">Neto que te queda</span><span class="rv pos" id="venta-neto">—</span></div>
+      <div class="warn" style="margin-top:8px">Al vender pierdes la garantía: el banco vuelve al techo del 80%. Los gastos incluyen agencia, plusvalía municipal y notaría — el IRPF sobre la ganancia patrimonial va aparte y conviene calcularlo con tu gestor.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:11px;margin-top:14px;padding-top:11px;border-top:.5px solid rgba(0,0,0,.07)">
+      <input type="checkbox" id="cashout">
+      <label for="cashout" style="font-size:13.5px;font-weight:500;flex:1;cursor:pointer">Hipotecar el piso para sacar liquidez</label>
+    </div>
+    <div id="cashout-box" style="display:none;padding-left:29px;margin-top:6px">
+      <div class="sl"><span class="sl-l">Importe a obtener</span><input type="range" id="co-importe" min="0" max="300000" step="5000" value="100000"><span class="sl-v" id="co-importe-o">100.000 €</span></div>
+      <div class="sl"><span class="sl-l">Plazo</span><input type="range" id="co-plazo" min="5" max="30" step="5" value="20"><span class="sl-v" id="co-plazo-o">20 años</span></div>
+      <div class="row"><span class="rl">Cuota mensual añadida</span><span class="rv neg" id="co-cuota">—</span></div>
+      <div class="warn" style="margin-top:8px">Esta cuota entra en tu ratio de endeudamiento y reduce el crédito que el banco te concede para la obra. El simulador ya lo descuenta arriba.</div>
+    </div>
+
+    <div class="row row-sum"><span class="rl" style="font-weight:500;color:#1a1a18">Recursos disponibles</span><span class="rv pos" id="recursos" style="font-size:16px">—</span></div>
+    <div id="balance-box"></div>
+  </div>
+
   <!-- ══ RESULTADO ══ -->
   <div class="st">Resultado</div>
   <div class="hero">
@@ -363,13 +396,21 @@ function update(){
   E('bviz-leg').innerHTML = `<span style="color:#1D9E75">■</span> Obra ${Math.round(PEM/CON_IVA*100)}% &nbsp; <span style="color:#7FB2E5">■</span> Técnicos ${Math.round(HON/CON_IVA*100)}% &nbsp; <span style="color:#E5A855">■</span> Tasas ${Math.round(TASAS/CON_IVA*100)}% &nbsp; <span style="color:#C9C6BD">■</span> IVA ${Math.round(IVA/CON_IVA*100)}%`;
 
   // ── 5 · Garantía ──
-  const garOn=E('gar-on').checked;
+  const vender = E('vender').checked;
+  const garCheck = E('gar-on');
+  if(vender){ garCheck.checked = false; garCheck.disabled = true; }
+  else { garCheck.disabled = false; }
+  const garOn = garCheck.checked && !vender;
   const vForz=+E('vforzada').value, ratioTas=+E('ratio-tas').value, cobPct=+E('cob-pct').value;
   const tasacion = vForz*ratioTas/100;
   const cobertura = garOn ? tasacion*cobPct/100 : 0;
 
   E('gar-box').style.display = garOn?'block':'none';
   E('gar-off').style.display = garOn?'none':'block';
+  E('gar-off').innerHTML = vender
+    ? '⚠ Has marcado la venta del piso: ya no puede servir de garantía. El banco vuelve al techo del ~80%.'
+    : 'Sin garantía adicional el banco limita la financiación al ~80% de la base y exige el resto como fondos propios.';
+  E('gar-off').style.color = vender ? '#633806' : '#b4b2a9';
   E('vforzada-o').textContent=eur(vForz);
   E('ratio-tas-o').textContent=ratioTas+'%';
   E('tasacion').textContent=eur(tasacion);
@@ -413,9 +454,29 @@ function update(){
     }
   }
 
-  // ── 7 · Capacidad ──
+  // ── 8a · Cash-out sobre el piso (afecta al ratio) ──
   const ingresos=+E('ingresos').value, netpct=+E('netpct').value, ratio=+E('ratio').value;
   const deudas=+E('deudas').value, plazo=+E('plazo').value, tipo=+E('tipo').value;
+
+  const cashoutOn = E('cashout').checked && !vender;
+  const coCheck = E('cashout');
+  if(vender){ coCheck.checked=false; coCheck.disabled=true; } else { coCheck.disabled=false; }
+
+  const coSlider=E('co-importe');
+  const coMax = Math.max(0, Math.round(tasacion*cobPct/100/5000)*5000);
+  coSlider.max = coMax > 0 ? coMax : 5000;
+  if(+coSlider.value > coSlider.max) coSlider.value = coSlider.max;
+  const coImporte = cashoutOn ? +coSlider.value : 0;
+  const coPlazo = +E('co-plazo').value;
+  const coCuota = coImporte>0 ? cuotaDe(coImporte, tipo+0.5, coPlazo) : 0;
+
+  E('cashout-box').style.display = cashoutOn?'block':'none';
+  E('co-importe-o').textContent=eur(coImporte);
+  E('co-plazo-o').textContent=coPlazo+' años';
+  E('co-cuota').textContent=eur(coCuota)+'/mes';
+
+  // ── 7 · Capacidad ──
+  const deudasTot = deudas + coCuota;
 
   E('ingresos-o').textContent=eur(ingresos);
   E('netpct-o').textContent=netpct+'%'; E('ratio-o').textContent=ratio+'%';
@@ -424,7 +485,7 @@ function update(){
 
   const netoMes = ingresos*netpct/100/12;
   const cuotaMax = netoMes*ratio/100;
-  const cuotaDisp = Math.max(0, cuotaMax-deudas);
+  const cuotaDisp = Math.max(0, cuotaMax-deudasTot);
   const maxPorIngresos = capitalDe(cuotaDisp, tipo, plazo);
 
   E('c-neto').textContent=eur(netoMes); E('c-cuota').textContent=eur(cuotaDisp);
@@ -448,16 +509,40 @@ function update(){
   if(limitePorIngresos){ tag.textContent='limitado por ingresos'; tag.className='tag t-warn'; }
   else { tag.textContent='limitado por % banco'; tag.className='tag t-info'; }
 
+  // ── 8b · Cobertura del aporte ──
+  const ahorro=+E('ahorro').value;
+  const vPrecio=+E('venta-precio').value, vGastos=+E('venta-gastos').value;
+  const vNeto = vender ? vPrecio*(1-vGastos/100) : 0;
+
+  E('vender-box').style.display = vender?'block':'none';
+  E('ahorro-o').textContent=eur(ahorro);
+  E('venta-precio-o').textContent=eur(vPrecio);
+  E('venta-gastos-o').textContent=vGastos+'%';
+  E('venta-neto').textContent=eur(vNeto);
+
+  const RECURSOS = ahorro + vNeto + coImporte;
+  E('ap-necesario').textContent=eurK(aporte);
+  E('recursos').textContent=eurK(RECURSOS);
+
+  const balance = RECURSOS - aporte;
+  const bb=E('balance-box');
+  if(balance >= 0){
+    bb.innerHTML='<div style="background:#E1F5EE;border-radius:10px;padding:.85rem 1.15rem;margin-top:.6rem;font-size:13px;color:#085041;line-height:1.55">'
+      + '<strong>Aporte cubierto.</strong> Te sobran '+eurK(balance)+' de colchón para imprevistos de obra — recomendable reservar un 10% del PEM ('+eurK(PEM*0.1)+').</div>';
+  } else {
+    bb.innerHTML='<div class="warn"><strong>Faltan '+eurK(-balance)+'.</strong> Opciones: aumentar el ahorro previo, ampliar la base financiable, alargar el plazo, o combinar venta y liquidez sobre el piso.</div>';
+  }
+
   // Alertas
   let al='';
   if(limitePorIngresos){
     al += '<div class="warn">Con '+eur(ingresos)+' de ingresos el banco no llega al '+bancoPct+'% solicitado. Tope por capacidad de pago: '+eurK(maxPorIngresos)+'. Opciones: alargar plazo, subir ingresos computables o reducir el presupuesto.</div>';
   }
-  if(aporte > 0){
-    al += '<div class="info">Necesitas '+eurK(aporte)+' de fondos propios ('+Math.round(aportePct)+'% del proyecto). Recuerda que el IVA de la obra y los honorarios técnicos no suelen entrar en la hipoteca autopromotor.</div>';
+  if(coCuota > 0){
+    al += '<div class="info">La hipoteca sobre el piso ('+eur(coCuota)+'/mes) reduce tu capacidad para la obra en unos '+eurK(capitalDe(coCuota,tipo,plazo))+'. Sacas liquidez pero pierdes crédito: compensa solo si el aporte es el cuello de botella.</div>';
   }
-  if(cuotaReal > cuotaDisp+1){
-    al += '<div class="warn">La cuota resultante supera la disponible.</div>';
+  if(aporte > 0 && balance < 0){
+    al += '<div class="info">Recuerda que el IVA de la obra y los honorarios técnicos no suelen entrar en la hipoteca autopromotor — por eso el aporte real es mayor que el 20% clásico.</div>';
   }
   E('alerts').innerHTML=al;
 }
@@ -466,7 +551,8 @@ function update(){
 const IDS = ['viv-m2','viv-eur','gar-m2','gar-eur','tal-m2','tal-eur','pis-m2','pis-eur','sauna',
   'arq-pct','ges-pct','atec-pct','opt-geo','opt-pais','icio-pct','conex','iva-obra','iva-tec',
   'gar-on','vforzada','ratio-tas','cob-pct','base-tipo','banco-pct',
-  'ingresos','netpct','ratio','deudas','plazo','tipo'];
+  'ingresos','netpct','ratio','deudas','plazo','tipo',
+  'ahorro','vender','venta-precio','venta-gastos','cashout','co-importe','co-plazo'];
 
 function collect(){
   const s={};

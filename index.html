@@ -70,6 +70,23 @@ select:focus{outline:none;border-color:#1D9E75}
 
 .tag{display:inline-block;font-size:10.5px;padding:1.5px 8px;border-radius:20px;vertical-align:middle;margin-left:6px}
 .t-ok{background:#E1F5EE;color:#085041}
+
+/* Tabla editable de entradas */
+.etab{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+.etab th{text-align:left;font-size:10.5px;font-weight:500;color:#8d8b84;text-transform:uppercase;letter-spacing:.05em;padding:5px 6px;border-bottom:.5px solid rgba(0,0,0,.1)}
+.etab th.r{text-align:right}
+.etab td{padding:4px 6px;border-bottom:.5px solid rgba(0,0,0,.04);vertical-align:middle}
+.etab tr:last-child td{border-bottom:none}
+.etab input[type=text],.etab input[type=number]{width:100%;font-size:13px;padding:4px 7px;border:.5px solid rgba(0,0,0,.12);border-radius:6px;background:#fafaf8;font-family:inherit;color:#1a1a18}
+.etab input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+.etab input:focus{outline:none;border-color:#1D9E75}
+.etab select{width:100%;font-size:12.5px;padding:3.5px 5px}
+.etab .acum{text-align:right;font-size:12px;color:#a8a59d;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bdel{background:none;border:none;color:#c9c6bd;font-size:17px;cursor:pointer;padding:0 3px;line-height:1;font-family:inherit}
+.bdel:hover{color:#E24B4A}
+.badd{font-size:12.5px;cursor:pointer;background:transparent;border:.5px solid rgba(0,0,0,.16);border-radius:7px;padding:5px 12px;font-family:inherit;color:#1a1a18;margin-top:9px}
+.badd:hover{background:#f1efe8}
+.etab-empty{font-size:12.5px;color:#b4b2a9;padding:10px 6px}
 .t-warn{background:#FAEEDA;color:#633806}
 .t-info{background:#E6F1FB;color:#0C447C}
 
@@ -282,7 +299,24 @@ select:focus{outline:none;border-color:#1D9E75}
     <div class="row" style="padding-bottom:10px"><span class="rl" style="font-weight:500;color:#1a1a18">Aporte necesario</span><span class="rv neg" id="ap-necesario" style="font-size:17px">—</span></div>
     <div class="note" style="margin-top:-4px;margin-bottom:8px" id="ap-detalle"></div>
 
-    <div class="sl" style="margin-top:6px"><span class="sl-l">Ahorro disponible al firmar</span><input type="range" id="ahorro" min="0" max="400000" step="5000" value="60000"><span class="sl-v" id="ahorro-o">60.000 €</span></div>
+    <div style="font-size:11px;font-weight:500;color:#8d8b84;text-transform:uppercase;letter-spacing:.05em;margin-top:14px;padding-top:11px;border-top:.5px solid rgba(0,0,0,.07)">Entradas de recursos previstas</div>
+    <table class="etab">
+      <thead><tr>
+        <th style="width:112px">Mes</th>
+        <th>Concepto</th>
+        <th class="r" style="width:105px">Importe</th>
+        <th class="r" style="width:88px">Acumulado</th>
+        <th style="width:26px"></th>
+      </tr></thead>
+      <tbody id="ent-body"></tbody>
+    </table>
+    <button class="badd" onclick="addEnt()">+ Añadir entrada</button>
+
+    <div class="sl" style="margin-top:14px"><span class="sl-l">Ahorro mensual recurrente</span><input type="range" id="ahorro-mes" min="0" max="5000" step="100" value="1500"><span class="sl-v" id="ahorro-mes-o">1.500 €</span></div>
+    <div class="sl"><span class="sl-l">Meses de acumulación</span><input type="range" id="ahorro-meses" min="0" max="48" step="1" value="12"><span class="sl-v" id="ahorro-meses-o">12 meses</span></div>
+    <div class="row row-sub"><span class="rl">Aporta al total</span><span class="rv" id="ahorro-rec">18.000 €</span></div>
+
+    <div class="row row-sum"><span class="rl" style="font-weight:500;color:#1a1a18">Total entradas previstas</span><span class="rv pos" id="ent-total" style="font-size:16px">—</span></div>
 
     <div style="display:flex;align-items:center;gap:11px;margin-top:14px;padding-top:11px;border-top:.5px solid rgba(0,0,0,.07)">
       <input type="checkbox" id="vender">
@@ -598,12 +632,20 @@ function update(){
   tag.textContent=topes[0].k; tag.className='tag '+topes[0].c;
 
   // ── 8b · Cobertura del aporte ──
-  const ahorro=+E('ahorro').value;
+  const ahorroMes=+E('ahorro-mes').value, ahorroMeses=+E('ahorro-meses').value;
+  const ahorroRec = ahorroMes*ahorroMeses;
+  E('ahorro-mes-o').textContent=eur(ahorroMes);
+  E('ahorro-meses-o').textContent=ahorroMeses+' meses';
+  E('ahorro-rec').textContent=eur(ahorroRec);
+
+  const sumEnt = entradas.reduce((s,e)=>s+(+e.importe||0),0);
+  const ahorro = sumEnt + ahorroRec;
+  E('ent-total').textContent=eur(ahorro);
+
   const vPrecio=+E('venta-precio').value, vGastos=+E('venta-gastos').value;
   const vNeto = vender ? vPrecio*(1-vGastos/100) : 0;
 
   E('vender-box').style.display = vender?'block':'none';
-  E('ahorro-o').textContent=eur(ahorro);
   E('venta-precio-o').textContent=eur(vPrecio);
   E('venta-gastos-o').textContent=vGastos+'%';
   E('venta-neto').textContent=eur(vNeto);
@@ -639,6 +681,59 @@ function update(){
   E('alerts').innerHTML=al;
 }
 
+// ══ Tabla editable de entradas ══
+const MESES_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+let entradas=[], nextEnt=1;
+
+function mesLabel(k){ const[y,m]=k.split('-'); return MESES_ES[+m-1]+' '+y.slice(2); }
+function mesOpts(sel){
+  let o='';
+  for(let y=2026;y<=2031;y++) for(let m=1;m<=12;m++){
+    if(y===2026&&m<7) continue;
+    const k=y+'-'+String(m).padStart(2,'0');
+    o+='<option value="'+k+'"'+(k===sel?' selected':'')+'>'+mesLabel(k)+'</option>';
+  }
+  return o;
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function renderEnt(){
+  const tb=E('ent-body');
+  if(!entradas.length){
+    tb.innerHTML='<tr><td colspan="5" class="etab-empty">Sin entradas. Añade bonus, ventas, eventos o cualquier ingreso previsto.</td></tr>';
+    return;
+  }
+  const ord=[...entradas].sort((a,b)=>a.mes.localeCompare(b.mes));
+  let acum=0;
+  tb.innerHTML=ord.map(e=>{
+    acum+=(+e.importe||0);
+    return '<tr>'
+      +'<td><select onchange="updEnt('+e.id+',\'mes\',this.value)">'+mesOpts(e.mes)+'</select></td>'
+      +'<td><input type="text" value="'+esc(e.desc)+'" placeholder="Concepto" onchange="updEnt('+e.id+',\'desc\',this.value)"></td>'
+      +'<td><input type="number" value="'+(+e.importe||0)+'" min="0" step="1000" onchange="updEnt('+e.id+',\'importe\',+this.value)"></td>'
+      +'<td class="acum">'+eur(acum)+'</td>'
+      +'<td><button class="bdel" onclick="delEnt('+e.id+')" title="Eliminar">&times;</button></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function addEnt(){
+  const last=entradas.length?[...entradas].sort((a,b)=>b.mes.localeCompare(a.mes))[0].mes:'2028-06';
+  entradas.push({id:nextEnt++,mes:last,desc:'',importe:0});
+  renderEnt(); update();
+}
+function delEnt(id){ entradas=entradas.filter(e=>e.id!==id); renderEnt(); update(); }
+function updEnt(id,f,v){ const e=entradas.find(x=>x.id===id); if(e){ e[f]=v; renderEnt(); update(); } }
+
+function seedEnt(){
+  entradas=[
+    {id:1,mes:'2028-06',desc:'Ahorro acumulado disponible',importe:60000},
+    {id:2,mes:'2028-09',desc:'Bonus anual',importe:15000},
+    {id:3,mes:'2028-12',desc:'Evento My Coffee Awards',importe:30000}
+  ];
+  nextEnt=4;
+}
+
 // ══ Persistencia GitHub ══
 const IDS = ['terreno','terreno-libre','previos',
   'viv-m2','viv-eur','gar-m2','gar-eur','tal-m2','tal-eur','pis-m2','pis-eur','sauna',
@@ -646,16 +741,20 @@ const IDS = ['terreno','terreno-libre','previos',
   'gar-on','vforzada','ratio-tas','cob-pct','base-tipo','banco-pct','uplift','ltv-max',
   'ingresos','netpct','ratio','deudas','plazo','tipo',
   'hon-prefirma','tasas-prefirma',
-  'ahorro','vender','venta-precio','venta-gastos','cashout','co-importe','co-plazo'];
+  'ahorro-mes','ahorro-meses','vender','venta-precio','venta-gastos','cashout','co-importe','co-plazo'];
 
 function collect(){
   const s={};
   IDS.forEach(id=>{ const el=E(id); if(el) s[id] = el.type==='checkbox' ? el.checked : el.value; });
+  s.entradas = entradas.map(e=>({id:e.id,mes:e.mes,desc:e.desc,importe:+e.importe||0}));
+  s.nextEnt = nextEnt;
   return s;
 }
 function apply(s){
   if(!s) return;
   IDS.forEach(id=>{ const el=E(id); if(el && s[id]!==undefined){ if(el.type==='checkbox') el.checked=s[id]; else el.value=s[id]; } });
+  if(Array.isArray(s.entradas)){ entradas=s.entradas; nextEnt=s.nextEnt||entradas.length+1; }
+  renderEnt();
   update();
 }
 
@@ -704,8 +803,11 @@ async function doSave(){
 }
 
 // Init
+seedEnt();
+renderEnt();
 document.querySelectorAll('input,select').forEach(el=>{
   if(el.closest('.modal')) return;
+  if(el.closest('.etab')) return;
   el.addEventListener('input', update);
   el.addEventListener('change', update);
 });

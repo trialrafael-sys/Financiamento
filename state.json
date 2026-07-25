@@ -25,8 +25,8 @@
     "vforzada": "200000",
     "ratio-tas": "140",
     "cob-pct": "80",
-    "base-tipo": "pem",
-    "banco-pct": "90",
+    "base-tipo": "pemiva",
+    "banco-pct": "70",
     "uplift": "115",
     "ltv-max": "80",
     "ingresos": "160000",
@@ -67,5 +67,5 @@
     ],
     "nextEnt": 4
   },
-  "_saved": "2026-07-25T14:18:47.831Z"
+  "_saved": "2026-07-25T14:21:43.493Z"
 }

@@ -25,16 +25,16 @@
     "vforzada": "200000",
     "ratio-tas": "140",
     "cob-pct": "80",
-    "base-tipo": "pemiva",
+    "base-tipo": "pem",
     "banco-pct": "90",
     "uplift": "115",
     "ltv-max": "80",
-    "ingresos": "130000",
+    "ingresos": "160000",
     "netpct": "63",
     "ratio": "35",
-    "deudas": "0",
+    "deudas": "450",
     "plazo": "25",
-    "tipo": "3.5",
+    "tipo": "2.5",
     "hon-prefirma": "55",
     "tasas-prefirma": true,
     "ahorro-mes": "1500",
@@ -48,24 +48,24 @@
     "entradas": [
       {
         "id": 1,
-        "mes": "2028-06",
+        "mes": "2027-12",
         "desc": "Ahorro acumulado disponible",
-        "importe": 60000
+        "importe": 40000
       },
       {
         "id": 2,
-        "mes": "2028-09",
+        "mes": "2026-12",
         "desc": "Bonus anual",
         "importe": 15000
       },
       {
         "id": 3,
-        "mes": "2028-12",
+        "mes": "2027-12",
         "desc": "Evento My Coffee Awards",
         "importe": 30000
       }
     ],
     "nextEnt": 4
   },
-  "_saved": "2026-07-25T14:14:03.160Z"
+  "_saved": "2026-07-25T14:18:47.831Z"
 }

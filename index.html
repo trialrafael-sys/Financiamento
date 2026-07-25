@@ -115,6 +115,18 @@ select:focus{outline:none;border-color:#1D9E75}
   <p class="sub">Bianca &amp; Rafael · Calle Serrat de Tabal, 66 — Arbúcies (Girona)</p>
   <p class="ref">Basado en la propuesta de Alventosa Morell Arquitectes (19/06/2026) · 250 m² construidos + piscina y sauna</p>
 
+  <!-- ══ 0 · TERRENO ══ -->
+  <div class="st">0 · Terreno y aportaciones previas <span class="st-sub">capital ya invertido</span></div>
+  <div class="card">
+    <div class="sl"><span class="sl-l">Valor del terreno</span><input type="range" id="terreno" min="0" max="400000" step="5000" value="150000"><span class="sl-v" id="terreno-o">150.000 €</span></div>
+    <div style="display:flex;align-items:center;gap:11px;margin-top:8px">
+      <input type="checkbox" id="terreno-libre" checked>
+      <label for="terreno-libre" style="font-size:13.5px;color:#5f5e5a;flex:1;cursor:pointer">En propiedad y libre de cargas</label>
+    </div>
+    <div class="sl" style="margin-top:10px"><span class="sl-l">Geotecnia y topografía <span class="mut">(ya realizadas)</span></span><input type="range" id="previos" min="0" max="20000" step="500" value="4000"><span class="sl-v" id="previos-o">4.000 €</span></div>
+    <div class="info" id="terreno-info"></div>
+  </div>
+
   <!-- ══ 1 · EJECUCIÓN MATERIAL ══ -->
   <div class="st">1 · Coste de ejecución de la obra <span class="st-sub">PEM</span></div>
   <div class="card">
@@ -184,6 +196,8 @@ select:focus{outline:none;border-color:#1D9E75}
     <div class="row row-sub"><span class="rl">IVA total</span><span class="rv" id="r-iva">65.210 €</span></div>
 
     <div class="row row-sum"><span class="rl" style="font-weight:500;color:#1a1a18;font-size:14.5px">TOTAL CON IVA</span><span class="rv" id="r-con" style="font-size:19px;color:#085041">635.117 €</span></div>
+    <div class="row row-sub"><span class="rl">+ terreno aportado</span><span class="rv" id="r-terreno">150.000 €</span></div>
+    <div class="row"><span class="rl" style="font-weight:500;color:#1a1a18">Valor total de la operación</span><span class="rv" id="r-operacion" style="font-size:15px">785.117 €</span></div>
     <div class="bar-viz" id="bviz"></div>
     <div class="note" id="bviz-leg"></div>
   </div>
@@ -221,6 +235,14 @@ select:focus{outline:none;border-color:#1D9E75}
     <div class="sl" style="margin-top:8px"><span class="sl-l">% financiado por el banco</span><input type="range" id="banco-pct" min="50" max="100" step="5" value="90"><span class="sl-v" id="banco-pct-o">90%</span></div>
     <div class="row"><span class="rl">Crédito solicitado</span><span class="rv" id="cred-sol">452.430 €</span></div>
     <div class="note" id="banco-note"></div>
+
+    <div style="border-top:.5px solid rgba(0,0,0,.07);padding-top:11px;margin-top:12px">
+      <div class="sl"><span class="sl-l">Tasación obra terminada <span class="mut">(% s/terreno+PEM)</span></span><input type="range" id="uplift" min="90" max="160" step="5" value="115"><span class="sl-v" id="uplift-o">115%</span></div>
+      <div class="row"><span class="rl">Valor de tasación final estimado</span><span class="rv" id="valor-final">—</span></div>
+      <div class="sl" style="margin-top:8px"><span class="sl-l">LTV máximo del banco</span><input type="range" id="ltv-max" min="60" max="90" step="5" value="80"><span class="sl-v" id="ltv-max-o">80%</span></div>
+      <div class="row"><span class="rl">Techo por tasación</span><span class="rv" id="techo-ltv">—</span></div>
+      <div class="note" id="ltv-note"></div>
+    </div>
   </div>
 
   <!-- ══ 7 · CAPACIDAD ══ -->
@@ -243,7 +265,22 @@ select:focus{outline:none;border-color:#1D9E75}
   <!-- ══ 8 · COBERTURA DEL APORTE ══ -->
   <div class="st">8 · Cómo cubres el aporte propio <span class="st-sub">el piso como colateral no genera efectivo</span></div>
   <div class="card">
+    <div style="font-size:11px;font-weight:500;color:#8d8b84;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Ya desembolsado antes de firmar la hipoteca</div>
+    <div class="sl"><span class="sl-l">% honorarios pagados antes de firma</span><input type="range" id="hon-prefirma" min="0" max="100" step="5" value="55"><span class="sl-v" id="hon-prefirma-o">55%</span></div>
+    <div class="row row-sub"><span class="rl">Anteproyecto, proyecto básico y ejecutivo, gestión</span><span class="rv" id="d-hon">—</span></div>
+    <div style="display:flex;align-items:center;gap:11px;margin-top:8px">
+      <input type="checkbox" id="tasas-prefirma" checked>
+      <label for="tasas-prefirma" style="font-size:13px;color:#5f5e5a;flex:1;cursor:pointer">Licencia e ICIO pagados al solicitar licencia</label>
+      <span class="rv mut" id="d-tasas">—</span>
+    </div>
+    <div class="row row-sub" style="margin-top:6px"><span class="rl">Geotecnia y topografía (ya hechas)</span><span class="rv" id="d-prev">—</span></div>
+    <div class="row row-sum"><span class="rl" style="font-weight:500;color:#1a1a18">Total desembolsado antes de firma</span><span class="rv neg" id="d-total" style="font-size:16px">—</span></div>
+    <div class="note">Estos importes salen de vuestro bolsillo antes de que el banco libere el primer pago. La hipoteca autopromotor dispone por certificaciones de obra, no antes.</div>
+  </div>
+
+  <div class="card">
     <div class="row" style="padding-bottom:10px"><span class="rl" style="font-weight:500;color:#1a1a18">Aporte necesario</span><span class="rv neg" id="ap-necesario" style="font-size:17px">—</span></div>
+    <div class="note" style="margin-top:-4px;margin-bottom:8px" id="ap-detalle"></div>
 
     <div class="sl" style="margin-top:6px"><span class="sl-l">Ahorro disponible al firmar</span><input type="range" id="ahorro" min="0" max="400000" step="5000" value="60000"><span class="sl-v" id="ahorro-o">60.000 €</span></div>
 
@@ -330,6 +367,12 @@ function capitalDe(cuota, tipoAnual, anios){
 }
 
 function update(){
+  // ── 0 · Terreno ──
+  const TERRENO=+E('terreno').value, terrLibre=E('terreno-libre').checked;
+  const PREVIOS=+E('previos').value;
+  E('terreno-o').textContent=eur(TERRENO);
+  E('previos-o').textContent=eur(PREVIOS);
+
   // ── 1 · PEM ──
   const vivM2=+E('viv-m2').value, vivEur=+E('viv-eur').value;
   const garM2=+E('gar-m2').value, garEur=+E('gar-eur').value;
@@ -390,6 +433,13 @@ function update(){
   E('r-sin').textContent=eur(SIN_IVA);
   E('iva-obra-o').textContent=ivaObraPct+'%'; E('iva-tec-o').textContent=ivaTecPct+'%';
   E('r-iva').textContent=eur(IVA); E('r-con').textContent=eur(CON_IVA);
+  const OPERACION = CON_IVA + TERRENO;
+  E('r-terreno').textContent=eur(TERRENO);
+  E('r-operacion').textContent=eur(OPERACION);
+
+  E('terreno-info').innerHTML = terrLibre
+    ? 'El terreno en propiedad y libre de cargas cuenta como aportación de capital: el banco lo suma al valor final del inmueble, lo que amplía el importe que puede prestar sin exigirte más efectivo.'
+    : '⚠ Si el terreno tiene cargas o no está escriturado a vuestro nombre, el banco no lo computa como aportación y el LTV empeora.';
 
   const segs=[['#1D9E75',PEM],['#7FB2E5',HON],['#E5A855',TASAS],['#C9C6BD',IVA]];
   E('bviz').innerHTML = segs.map(s=>`<div class="bv-seg" style="background:${s[0]};width:${s[1]/CON_IVA*100}%"></div>`).join('');
@@ -441,6 +491,25 @@ function update(){
     bn.style.color='#b4b2a9';
   } else { bn.textContent=''; }
 
+  // ── 6b · Tasación final y LTV ──
+  const uplift=+E('uplift').value;
+  const baseValor = (terrLibre ? TERRENO : 0) + PEM;
+  const VALOR_FINAL = baseValor*uplift/100;
+  const ltvSlider=E('ltv-max');
+  const ltvTope = garOn ? 90 : 80;
+  ltvSlider.max = ltvTope;
+  if(+ltvSlider.value > ltvTope) ltvSlider.value = ltvTope;
+  const ltvMax=+ltvSlider.value;
+  const techoLTV = VALOR_FINAL*ltvMax/100;
+
+  E('uplift-o').textContent=uplift+'%';
+  E('valor-final').textContent=eur(VALOR_FINAL);
+  E('ltv-max-o').textContent=ltvMax+'%';
+  E('techo-ltv').textContent=eur(techoLTV);
+  E('ltv-note').innerHTML = terrLibre
+    ? 'Con el terreno aportado ('+eur(TERRENO)+'), el valor final sube y con él el techo de crédito. Sin terreno propio el techo sería '+eur(PEM*uplift/100*ltvMax/100)+'.'
+    : 'El terreno no se computa al no estar libre de cargas.';
+
   // Info garantía
   if(garOn){
     const extra = Math.max(0, credSol - BASE*0.8);
@@ -491,12 +560,32 @@ function update(){
   E('c-neto').textContent=eur(netoMes); E('c-cuota').textContent=eur(cuotaDisp);
   E('c-max').textContent=eurK(maxPorIngresos);
 
+  // ── Desembolsos antes de firma ──
+  const honPre=+E('hon-prefirma').value;
+  const tasasPre=E('tasas-prefirma').checked;
+  const dHon = HON*honPre/100*(1+ivaTecPct/100);
+  const dTasas = tasasPre ? (TASA_LICENCIA + tIcio) : 0;
+  const DESEMBOLSADO = dHon + dTasas + PREVIOS;
+
+  E('hon-prefirma-o').textContent=honPre+'%';
+  E('d-hon').textContent=eur(dHon);
+  E('d-tasas').textContent=tasasPre?eur(dTasas):'—';
+  E('d-prev').textContent=eur(PREVIOS);
+  E('d-total').textContent=eur(DESEMBOLSADO);
+
   // ── Resultado ──
-  const limitePorIngresos = maxPorIngresos < credSol;
-  const CRED = Math.min(credSol, maxPorIngresos);
+  const topes = [
+    {v: credSol,        k: 'limitado por % banco',  c: 't-info'},
+    {v: maxPorIngresos, k: 'limitado por ingresos', c: 't-warn'},
+    {v: techoLTV,       k: 'limitado por tasación', c: 't-warn'}
+  ].sort((a,b)=>a.v-b.v);
+  const CRED = Math.max(0, topes[0].v);
+  const limitePorIngresos = topes[0].k === 'limitado por ingresos';
   const cuotaReal = cuotaDe(CRED, tipo, plazo);
-  const aporte = Math.max(0, CON_IVA-CRED);
-  const aportePct = CON_IVA>0 ? aporte/CON_IVA*100 : 0;
+
+  const PENDIENTE = Math.max(0, CON_IVA - DESEMBOLSADO);
+  const aporte = Math.max(0, PENDIENTE - CRED);
+  const aportePct = CON_IVA>0 ? (aporte+DESEMBOLSADO)/CON_IVA*100 : 0;
 
   E('res-cred').textContent=eurK(CRED);
   E('res-cuota').textContent='Cuota estimada: '+eur(cuotaReal)+'/mes durante '+plazo+' años al '+pct(tipo,2);
@@ -506,8 +595,7 @@ function update(){
   E('res-m2').textContent= construido>0 ? Math.round(CON_IVA/construido).toLocaleString('es-ES')+' €/m²' : '—';
 
   const tag=E('lim-tag');
-  if(limitePorIngresos){ tag.textContent='limitado por ingresos'; tag.className='tag t-warn'; }
-  else { tag.textContent='limitado por % banco'; tag.className='tag t-info'; }
+  tag.textContent=topes[0].k; tag.className='tag '+topes[0].c;
 
   // ── 8b · Cobertura del aporte ──
   const ahorro=+E('ahorro').value;
@@ -522,6 +610,7 @@ function update(){
 
   const RECURSOS = ahorro + vNeto + coImporte;
   E('ap-necesario').textContent=eurK(aporte);
+  E('ap-detalle').innerHTML = 'Coste pendiente tras lo ya desembolsado ('+eurK(PENDIENTE)+') menos el crédito ('+eurK(CRED)+'). Esfuerzo total en efectivo: '+eurK(DESEMBOLSADO+aporte)+' sobre un proyecto de '+eurK(CON_IVA)+', más el terreno ya aportado.';
   E('recursos').textContent=eurK(RECURSOS);
 
   const balance = RECURSOS - aporte;
@@ -535,8 +624,11 @@ function update(){
 
   // Alertas
   let al='';
-  if(limitePorIngresos){
+  if(topes[0].k === 'limitado por ingresos'){
     al += '<div class="warn">Con '+eur(ingresos)+' de ingresos el banco no llega al '+bancoPct+'% solicitado. Tope por capacidad de pago: '+eurK(maxPorIngresos)+'. Opciones: alargar plazo, subir ingresos computables o reducir el presupuesto.</div>';
+  }
+  if(topes[0].k === 'limitado por tasación'){
+    al += '<div class="warn">El techo lo marca la tasación: '+eurK(techoLTV)+' ('+ltvMax+'% de '+eurK(VALOR_FINAL)+'). Subir el valor del terreno o mejorar la calidad de obra elevaría la tasación final.</div>';
   }
   if(coCuota > 0){
     al += '<div class="info">La hipoteca sobre el piso ('+eur(coCuota)+'/mes) reduce tu capacidad para la obra en unos '+eurK(capitalDe(coCuota,tipo,plazo))+'. Sacas liquidez pero pierdes crédito: compensa solo si el aporte es el cuello de botella.</div>';
@@ -548,10 +640,12 @@ function update(){
 }
 
 // ══ Persistencia GitHub ══
-const IDS = ['viv-m2','viv-eur','gar-m2','gar-eur','tal-m2','tal-eur','pis-m2','pis-eur','sauna',
+const IDS = ['terreno','terreno-libre','previos',
+  'viv-m2','viv-eur','gar-m2','gar-eur','tal-m2','tal-eur','pis-m2','pis-eur','sauna',
   'arq-pct','ges-pct','atec-pct','opt-geo','opt-pais','icio-pct','conex','iva-obra','iva-tec',
-  'gar-on','vforzada','ratio-tas','cob-pct','base-tipo','banco-pct',
+  'gar-on','vforzada','ratio-tas','cob-pct','base-tipo','banco-pct','uplift','ltv-max',
   'ingresos','netpct','ratio','deudas','plazo','tipo',
+  'hon-prefirma','tasas-prefirma',
   'ahorro','vender','venta-precio','venta-gastos','cashout','co-importe','co-plazo'];
 
 function collect(){

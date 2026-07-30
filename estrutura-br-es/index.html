@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estrutura BR–ES · Planta de carga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vellum:#E6E7E2;
+  --vellum-2:#DDDFD8;
+  --graphite:#22262B;
+  --graphite-soft:#5A6169;
+  --rule:#B9BDB4;
+  --br:#A8541E;
+  --es:#1F4E5F;
+  --leak:#9E2B37;
+  --ok:#3E6B4A;
+  --shadow:0 1px 0 var(--rule);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --body:'Instrument Sans',system-ui,sans-serif;
+  --display:'Bricolage Grotesque',var(--body);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--vellum);
+  color:var(--graphite);
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    linear-gradient(var(--vellum-2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--vellum-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  background-position:-1px -1px;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 96px}
+
+/* ---- header ---- */
+header{padding:40px 0 22px;border-bottom:1.5px solid var(--graphite)}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--graphite-soft);margin:0 0 10px
+}
+h1{
+  font-family:var(--display);font-weight:800;font-size:clamp(30px,5.4vw,54px);
+  line-height:.98;letter-spacing:-.025em;margin:0 0 12px;max-width:16ch
+}
+.sub{max-width:60ch;color:var(--graphite-soft);margin:0}
+
+/* ---- tabs ---- */
+nav.tabs{
+  display:flex;gap:0;flex-wrap:wrap;margin:0 0 34px;
+  border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:40;
+  background:var(--vellum);
+}
+nav.tabs button{
+  appearance:none;border:0;background:transparent;cursor:pointer;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--graphite-soft);padding:14px 16px 12px;border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:color .15s
+}
+nav.tabs button:hover{color:var(--graphite)}
+nav.tabs button[aria-selected="true"]{color:var(--graphite);border-bottom-color:var(--graphite)}
+nav.tabs button:focus-visible{outline:2px solid var(--es);outline-offset:2px}
+
+section[role=tabpanel]{display:none;animation:fade .3s ease}
+section[role=tabpanel].on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+h2{font-family:var(--display);font-weight:600;font-size:24px;letter-spacing:-.015em;margin:0 0 6px}
+h3{font-family:var(--display);font-weight:600;font-size:16px;margin:30px 0 10px}
+.lede{color:var(--graphite-soft);max-width:64ch;margin:0 0 26px}
+
+/* ---- diagram ---- */
+.diagram{
+  border:1.5px solid var(--graphite);background:rgba(255,255,255,.42);
+  padding:8px;margin:0 0 12px;overflow-x:auto
+}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+.legend{
+  display:flex;gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.06em;color:var(--graphite-soft);text-transform:uppercase;margin:0 0 34px
+}
+.legend i{display:inline-block;width:20px;height:0;border-top:2px solid;vertical-align:middle;margin-right:7px}
+
+/* ---- cards / tables ---- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.card{border:1px solid var(--graphite);background:rgba(255,255,255,.5);padding:18px}
+.card h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--graphite-soft);margin:0 0 12px;font-weight:500}
+.stat{font-family:var(--display);font-weight:800;font-size:31px;letter-spacing:-.02em;line-height:1}
+.stat small{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.02em;color:var(--graphite-soft);display:block;margin-top:7px;letter-spacing:.04em}
+.stat.leak{color:var(--leak)}
+.stat.ok{color:var(--ok)}
+
+table{width:100%;border-collapse:collapse;font-size:14px;margin:0 0 8px}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  text-align:left;color:var(--graphite-soft);font-weight:500;padding:9px 10px;border-bottom:1.5px solid var(--graphite)}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:middle}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr.total td{border-top:1.5px solid var(--graphite);border-bottom:0;font-weight:600}
+tr.sub td{color:var(--graphite-soft);font-size:13px}
+
+/* ---- inputs ---- */
+label.f{display:block;margin:0 0 13px}
+label.f span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--graphite-soft);display:block;margin-bottom:5px}
+input[type=number],input[type=text],select{
+  width:100%;font-family:var(--mono);font-size:14px;padding:8px 10px;
+  border:1px solid var(--rule);background:rgba(255,255,255,.75);color:var(--graphite);border-radius:0
+}
+input:focus,select:focus{outline:2px solid var(--es);outline-offset:-1px;border-color:var(--es)}
+input[type=range]{width:100%;accent-color:var(--es)}
+.tog{display:flex;align-items:flex-start;gap:9px;margin:0 0 11px;font-size:13.5px;cursor:pointer}
+.tog input{margin-top:3px;accent-color:var(--es);flex-shrink:0}
+.chip{
+  display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;margin-left:7px
+}
+.chip.br{color:var(--br)}.chip.es{color:var(--es)}
+
+.note{border-left:2.5px solid var(--graphite);padding:2px 0 2px 15px;margin:20px 0;color:var(--graphite-soft);font-size:14px;max-width:66ch}
+.note strong{color:var(--graphite)}
+.warn{border-left-color:var(--leak)}
+.warn strong{color:var(--leak)}
+.good{border-left-color:var(--ok)}
+.good strong{color:var(--ok)}
+
+/* ---- timeline ---- */
+.tl{list-style:none;padding:0;margin:0;border-left:1.5px solid var(--graphite);max-width:74ch}
+.tl li{position:relative;padding:0 0 26px 26px}
+.tl li::before{
+  content:'';position:absolute;left:-5px;top:7px;width:8px;height:8px;
+  background:var(--vellum);border:1.5px solid var(--graphite);border-radius:50%
+}
+.tl li.key::before{background:var(--graphite)}
+.tl .when{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--graphite-soft);display:block;margin-bottom:3px}
+.tl .what{font-weight:600;display:block;margin-bottom:3px}
+.tl .why{color:var(--graphite-soft);font-size:13.5px}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--graphite-soft);line-height:1.9}
+.saved{position:fixed;bottom:16px;right:16px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--graphite);color:var(--vellum);
+  padding:7px 12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:90}
+.saved.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:640px){
+  body{background-size:22px 22px}
+  .wrap{padding:0 14px 70px}
+  header{padding:26px 0 18px}
+  .card{padding:14px}
+  td,th{padding:7px 6px}
+  table{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Planeamento societário · Brasil ⇄ Espanha · rev. jul 2026</p>
+  <h1>A planta de carga da estrutura</h1>
+  <p class="sub">Onde cada entidade se apoia, quanto custa manter de pé, e quanto imposto vaza em cada junta. Todos os campos são editáveis e salvam sozinhos.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="estrutura">Estrutura</button>
+  <button role="tab" aria-selected="false" data-tab="custos">Custo de manutenção</button>
+  <button role="tab" aria-selected="false" data-tab="sim">Simulador</button>
+  <button role="tab" aria-selected="false" data-tab="sucessao">Sucessão</button>
+  <button role="tab" aria-selected="false" data-tab="roadmap">Sequência</button>
+</nav>
+
+<!-- ============ ESTRUTURA ============ -->
+<section role="tabpanel" id="estrutura" class="on">
+  <h2>Hierarquia e fluxos</h2>
+  <p class="lede">As linhas cheias são participação societária. As tracejadas são fluxo de valor, anotadas com a carga que incide na travessia. Os números atualizam conforme o simulador.</p>
+
+  <div class="diagram"><svg id="org" viewBox="0 0 1000 660" role="img" aria-label="Organigrama da estrutura societária"></svg></div>
+  <div class="legend">
+    <span><i style="border-color:var(--graphite)"></i>Participação</span>
+    <span><i style="border-color:var(--es);border-top-style:dashed"></i>Dividendo / fluxo</span>
+    <span><i style="border-color:var(--leak);border-top-style:dashed"></i>Ponto de vazamento fiscal</span>
+    <span><i style="border-color:var(--br)"></i>Jurisdição Brasil</span>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Por que a HoldCo não pode ser patrimonial</h4>
+      <p style="margin:0;font-size:14px">Se mais de 50% do ativo não estiver afeto a atividade econômica, a sociedade vira <em>entidad patrimonial</em> (art. 5.2 LIS). Perde a exención do art. 21 sobre mais-valias, perde tipos reduzidos, e as participações perdem a isenção de empresa familiar no Impuesto sobre el Patrimonio e a redução de 95% no ISD — que é justamente o instrumento da sucessão dos seus pais.</p>
+    </div>
+    <div class="card">
+      <h4>Participações contam como afetas</h4>
+      <p style="margin:0;font-size:14px">Participações de 5% ou mais, geridas com meios materiais e pessoais reais, são consideradas afetas. Imóvel alugado sem empregado a jornada completa, não. É por isso que a patrimonialista fica fora da holding — e, por ora, fora da estrutura.</p>
+    </div>
+  </div>
+
+  <div class="note warn"><strong>O risco que nenhum desenho societário resolve.</strong> Se a direção efetiva da ConsultCo estiver em Barcelona, o art. 8.1 da LIS permite à Espanha tratá-la como residente fiscal espanhola — a empresa inteira a 25%, não um ajuste de preço. Administrador brasileiro com poderes e remuneração reais, contratos assinados no Brasil e atas locais são o que sustenta a posição.</p></div>
+</section>
+
+<!-- ============ CUSTOS ============ -->
+<section role="tabpanel" id="custos">
+  <h2>Custo de manutenção</h2>
+  <p class="lede">Recorrente mensal por entidade, editável. O setup é one-off no primeiro ano.</p>
+
+  <table id="tCost">
+    <thead><tr>
+      <th>Entidade</th><th>Função</th>
+      <th class="num">Mín €/mês</th><th class="num">Máx €/mês</th><th class="num">Setup €</th>
+    </tr></thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+  </table>
+
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card"><h4>Recorrente ano</h4><div class="stat" id="cAno">—</div></div>
+    <div class="card"><h4>Setup one-off</h4><div class="stat" id="cSetup">—</div></div>
+    <div class="card"><h4>Ano 1 total</h4><div class="stat" id="cAno1">—</div></div>
+  </div>
+
+  <div class="note"><strong>O que ficou de fora, de propósito.</strong> A sociedade patrimonial. Ela só se paga com carteira de aluguel real, e nenhum dos dois imóveis atuais deve entrar em sociedade: a casa de Arbúcies perde a isenção de vivienda habitual e gera retribución en especie pelo uso; o apartamento hipotecado dispara ITP/AJD e plusvalía, além de depender de anuência do banco.</div>
+</section>
+
+<!-- ============ SIMULADOR ============ -->
+<section role="tabpanel" id="sim">
+  <h2>Simulador de carga</h2>
+  <p class="lede">Mexa nos campos. A comparação Simples × Presumido e o custo total da estrutura recalculam na hora, e o organigrama acompanha.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>ConsultCo · Brasil <span class="chip br">R$</span></h4>
+      <label class="f"><span>Faturamento anual R$</span><input type="number" id="i_fat" step="10000"></label>
+      <label class="f"><span>Folha anual R$ (salários + 13º)</span><input type="number" id="i_folha" step="10000"></label>
+      <label class="f"><span>Alíquota ISS %</span><input type="number" id="i_iss" step="0.5"></label>
+      <label class="f"><span>% do lucro distribuído ao exterior</span><input type="number" id="i_dist" step="5"></label>
+      <label class="f"><span>Câmbio R$/€</span><input type="number" id="i_fx" step="0.05"></label>
+    </div>
+    <div class="card">
+      <h4>DistriCo · Espanha <span class="chip es">€</span></h4>
+      <label class="f"><span>Faturamento anual €</span><input type="number" id="i_dfat" step="10000"></label>
+      <label class="f"><span>Margem líquida %</span><input type="number" id="i_dmarg" step="1"></label>
+      <label class="f"><span>Lucro retido na holding %</span><input type="number" id="i_dret" step="5"></label>
+      <h4 style="margin-top:22px">TechCo · licenciamento a terceiros</h4>
+      <label class="f"><span>Receita de licenças €/ano</span><input type="number" id="i_tech" step="5000"></label>
+      <label class="tog"><input type="checkbox" id="i_pbox"><span>Patent Box aplicável — redução de 60% sobre a renda líquida do intangível, alíquota efetiva 10% em vez de 25%. Exige nexus: desenvolvimento dentro da SL.</span></label>
+    </div>
+  </div>
+
+  <h3>ConsultCo — Simples de hoje contra o desenho novo</h3>
+  <table id="tBr"><thead><tr>
+    <th>Componente</th><th class="num">Hoje · Simples</th><th class="num">Novo · Presumido</th><th class="num">Δ</th>
+  </tr></thead><tbody></tbody><tfoot></tfoot></table>
+
+  <div class="grid g3" style="margin-top:24px">
+    <div class="card"><h4>Incremento Brasil / ano</h4><div class="stat leak" id="sInc">—</div></div>
+    <div class="card"><h4>Carga efetiva nova</h4><div class="stat" id="sCarga">—</div></div>
+    <div class="card"><h4>Custo total estrutura ano 1</h4><div class="stat" id="sTot">—</div></div>
+  </div>
+
+  <h3>Lado espanhol</h3>
+  <table id="tEs"><thead><tr>
+    <th>Entidade</th><th class="num">Base</th><th class="num">Imposto</th><th class="num">Efetiva</th>
+  </tr></thead><tbody></tbody><tfoot></tfoot></table>
+
+  <div class="note" id="noteBreak"></div>
+
+  <div class="note warn"><strong>Por que não há linha de royalty aqui.</strong> No lucro presumido a base é a receita bruta presumida — despesa nenhuma reduz. Pagar royalty à TechCo não abateria nada no Brasil e custaria 15% de IRRF, 10% de CIDE, 9,25% de PIS/COFINS-Importação e ISS-importação: 25 a 30% da remessa contra 10% do dividendo. Migrar para lucro real para obter a dedução destruiria mais do que economizaria, dada a margem. A TechCo ganha dinheiro licenciando para terceiros, não para dentro de casa.</div>
+</section>
+
+<!-- ============ SUCESSÃO ============ -->
+<section role="tabpanel" id="sucessao">
+  <h2>Transferência da holding dos seus pais</h2>
+  <p class="lede">Você é residente fiscal espanhol. Isso significa que qualquer doação que receba — de ativo brasileiro ou espanhol — entra no ISD espanhol por obrigação pessoal, sobre patrimônio mundial. É o fato que governa todo o resto.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Parâmetros</h4>
+      <label class="f"><span>Valor a transferir €</span><input type="number" id="s_val" step="25000"></label>
+      <label class="f"><span>% que qualifica como empresa familiar</span><input type="number" id="s_qual" step="5" min="0" max="100"></label>
+      <label class="f"><span>Alíquota ITCMD no estado dos seus pais %</span><input type="number" id="s_itcmd" step="0.5"></label>
+      <label class="f"><span>Nº de donatários (você, Bianca, irmãos…)</span><input type="number" id="s_n" step="1" min="1"></label>
+      <label class="tog"><input type="checkbox" id="s_esc" checked><span>Formalizado em <strong>escritura pública</strong> — condição para a tarifa reduzida catalã de 5/7/9%. Sem ela, aplica-se a escala geral, que chega a 32%.</span></label>
+      <label class="tog"><input type="checkbox" id="s_red" checked><span>Redução de 95% de empresa familiar — exige doador com 65+ anos ou incapacidade permanente, cessação de funções diretivas e da respectiva remuneração, e manutenção por 5 anos pelo donatário.</span></label>
+    </div>
+    <div class="card">
+      <h4>Resultado</h4>
+      <table id="tSuc"><tbody></tbody></table>
+      <div class="stat" id="sucTot" style="margin-top:16px">—</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--graphite-soft);margin-top:8px" id="sucEf"></div>
+    </div>
+  </div>
+
+  <div class="note warn"><strong>O erro que custa 25% e é fácil de cometer.</strong> Não faça os seus pais doarem diretamente à HoldCo. Doação recebida por sociedade espanhola não é ISD — é receita tributável em Impuesto sobre Sociedades, cheia, sem redução de empresa familiar. O caminho é: doação <em>às pessoas físicas</em>, e em seguida aporte à holding via ampliação de capital, que é isenta de ITP/AJD na modalidade operaciones societarias.</div>
+
+  <div class="note good"><strong>A dupla tributação tem alívio.</strong> Não há tratado Brasil–Espanha para doações e heranças, mas o art. 23 da Ley 29/1987 permite deduzir o imposto pago no exterior, limitado ao que a Espanha cobraria sobre o mesmo bem. O ITCMD pago no Brasil abate do ISD catalão — por isso a linha de crédito no cálculo acima.</div>
+
+  <h3>Nem tudo vale a pena trazer</h3>
+  <p style="max-width:66ch;color:var(--graphite-soft)">Você pediu "tudo o que valer a pena", e o filtro é este:</p>
+  <table>
+    <thead><tr><th>Ativo</th><th>Trazer?</th><th>Razão</th></tr></thead>
+    <tbody>
+      <tr><td>Participações operacionais</td><td style="color:var(--ok);font-weight:600">Sim</td><td>Qualificam para a redução de 95% e para a isenção de empresa familiar no Patrimonio.</td></tr>
+      <tr><td>Caixa e aplicações</td><td style="color:var(--leak);font-weight:600">Não</td><td>Não qualificam para nenhuma redução. Entram cheios no ISD e depois no Patrimonio catalão todo ano.</td></tr>
+      <tr><td>Imóveis de renda no Brasil</td><td style="color:var(--br);font-weight:600">Depende</td><td>Sem estrutura de gestão com empregado, são patrimoniais — e contaminam a holding se entrarem nela.</td></tr>
+      <tr><td>Imóveis de uso da família</td><td style="color:var(--leak);font-weight:600">Não</td><td>Uso pessoal de bem societário vira retribución en especie, tributada todo ano.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>O que não se escapa.</strong> Como residente espanhol, o seu Impuesto sobre el Patrimonio incide sobre patrimônio mundial — deixar o ativo no Brasil não o tira da base. Em Catalunha começa em €500 mil, com alíquotas de 0,21% a 3,48%, mais o imposto de solidariedade acima de €3 milhões. A única blindagem real é a isenção de empresa familiar do art. 4.8 da Ley 19/1991, que exige participação de 5% individual ou 20% em grupo familiar, funções diretivas exercidas e mais de 50% da sua renda total vindo dali. Vale conferir se você cumpre o teste da renda: é onde a maioria falha.</div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section role="tabpanel" id="roadmap">
+  <h2>Sequência</h2>
+  <p class="lede">A ordem importa mais que o desenho. Duas etapas fora de sequência custam dinheiro real.</p>
+  <ul class="tl">
+    <li class="key"><span class="when">2026 · antes de tudo</span><span class="what">Saída fiscal da Bianca</span><span class="why">Ela só declarou renda este ano, então a saída é limpa. Precisa vir antes da transferência de quotas — residente e não residente têm regras e alíquotas diferentes de ganho de capital.</span></li>
+    <li><span class="when">2026</span><span class="what">Suas retificações de DAA</span><span class="why">Incluir o apartamento de Barcelona em Bens e Direitos pelos valores efetivamente pagos, com denúncia espontânea do art. 138 do CTN. Sem imposto, sem multa — mas só enquanto não houver procedimento fiscal aberto.</span></li>
+    <li><span class="when">2026</span><span class="what">Constituir HoldCo, DistriCo e TechCo</span><span class="why">A TechCo precisa nascer antes do desenvolvimento das próximas versões do sistema, para que os custos de I+D fiquem registrados nela e construam o nexus do Patent Box em vez de comprá-lo.</span></li>
+    <li class="key"><span class="when">2026 · colado à virada</span><span class="what">Transferir as quotas da ME para a HoldCo</span><span class="why">Enquanto o valor contábil é baixo. E colado ao fim do exercício: a entrada de PJ e de sócio no exterior exclui do Simples já no mês seguinte ao evento. Fazer isso em junho significa presumido no meio do ano, sem planejamento.</span></li>
+    <li><span class="when">2027 · até maio</span><span class="what">Sua DAA de 2026</span><span class="why">Residente o ano inteiro, renda mundial, crédito do tratado. É o custo de esticar a residência até a viagem.</span></li>
+    <li class="key"><span class="when">2027 · no embarque</span><span class="what">Sua saída definitiva</span><span class="why">CSDP até o último dia útil de fevereiro de 2028; DSDP na temporada de 2028, cobrindo 1º de janeiro de 2027 até a data do voo. Sem atraso.</span></li>
+    <li><span class="when">Quando os pais decidirem</span><span class="what">Doação com escritura pública</span><span class="why">Às pessoas físicas, nunca à sociedade. Depois, aporte à holding por ampliação de capital. Doações do mesmo doador acumulam dentro de 3 anos para efeito de escala — fracionar ano a ano não escapa da progressividade.</span></li>
+  </ul>
+
+  <div class="note"><strong>Antes de executar.</strong> Este arquivo é um mapa de decisão, não um parecer. O desenho precisa passar por uma boutique de tributação internacional com prática Brasil–Espanha, com os dois lados conversando — o nexus da TechCo e a direção efetiva da ConsultCo são os dois pontos onde há mais dinheiro em jogo e mais formalidade a cumprir.</div>
+</section>
+
+<footer>
+  Estrutura BR–ES · arquivo único, sem dependências · dados salvos no navegador<br>
+  Legislação de referência: Lei 15.270/2025 · Lei 14.596/2023 · LC 214/2025 · LIS arts. 5, 8, 21, 23, 100 · Ley 29/1987 arts. 20.6 e 23 · Llei 19/2010 (Catalunya) · Ley 19/1991 art. 4.8
+</footer>
+</div>
+<div class="saved" id="toast">salvo</div>
+
+<script>
+'use strict';
+/* ---------- persistência tolerante ---------- */
+const mem={};
+const store={
+  get(k){try{return localStorage.getItem(k)}catch(e){return k in mem?mem[k]:null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}
+};
+const KEY='estrutura-br-es-v1';
+
+/* ---------- estado ---------- */
+const D={
+  fat:1000000, folha:250000, iss:5, dist:100, fx:6.20,
+  dfat:600000, dmarg:10, dret:50, tech:0, pbox:false,
+  s_val:500000, s_qual:70, s_itcmd:4, s_n:2, s_esc:true, s_red:true,
+  costs:[
+    ['HoldCo SL','Holding de participações',100,200,3500],
+    ['DistriCo SL','Distribuidora — gestoría + laboral',300,600,3000],
+    ['EventsCo SL','Eventos',80,150,2000],
+    ['TechCo SL','Licenciamento do sistema',80,150,2500],
+    ['ConsultCo Ltda','Lucro presumido + sócio não residente',200,450,3500],
+    ['Assessoria','Operaciones vinculadas, Modelo 232, consolidação',150,300,6000]
+  ]
+};
+Object.assign(D, JSON.parse(store.get(KEY)||'{}'));
+
+const eur=n=>'€'+Math.round(n).toLocaleString('pt-BR');
+const brl=n=>'R$'+Math.round(n).toLocaleString('pt-BR');
+const pct=n=>(n*100).toFixed(1).replace('.',',')+'%';
+
+/* ---------- motor fiscal ---------- */
+const FAIXAS=[[180000,.06,0],[360000,.112,9360],[720000,.135,17640],
+  [1800000,.16,35640],[3600000,.21,125640],[4800000,.33,648000]];
+
+function simples(r){
+  const f=FAIXAS.find(x=>r<=x[0])||FAIXAS[5];
+  return Math.max(0,(r*f[1]-f[2]));
+}
+function presumido(r,folha,iss){
+  const base=r*.32;
+  const irpj=base*.15;
+  const adic=Math.max(0,base-240000)*.10;
+  const csll=base*.09;
+  const pis=r*.0065, cofins=r*.03;
+  const issv=r*(iss/100);
+  const cpp=folha*.268;
+  return {base,irpj,adic,csll,pis,cofins,iss:issv,cpp,
+    corp:irpj+adic+csll+pis+cofins+issv, total:irpj+adic+csll+pis+cofins+issv+cpp};
+}
+function calcBR(){
+  const s=simples(D.fat);
+  const p=presumido(D.fat,D.folha,D.iss);
+  const lucro=Math.max(0,D.fat-p.total-D.folha);
+  const distrib=lucro*(D.dist/100);
+  const irrf=distrib*.10;
+  return {s,p,lucro,distrib,irrf,novoTotal:p.total+irrf,inc:p.total+irrf-s};
+}
+function calcES(){
+  const dLucro=D.dfat*(D.dmarg/100);
+  const dIS=dLucro*.25;
+  const tLucro=D.tech;
+  const tIS=D.pbox? tLucro*.40*.25 : tLucro*.25;
+  return {dLucro,dIS,tLucro,tIS};
+}
+function calcCost(){
+  let mn=0,mx=0,su=0;
+  D.costs.forEach(c=>{mn+=+c[2];mx+=+c[3];su+=+c[4]});
+  return {mn,mx,su,anoMn:mn*12,anoMx:mx*12};
+}
+
+/* ---------- sucessão ---------- */
+const CAT=[[200000,.05],[600000,.07],[Infinity,.09]];
+const GERAL=[[50000,.07],[150000,.11],[400000,.17],[800000,.24],[Infinity,.32]];
+function escala(base,tab){
+  let t=0,prev=0;
+  for(const [lim,r] of tab){
+    if(base<=prev) break;
+    t+=(Math.min(base,lim)-prev)*r; prev=lim;
+  }
+  return t;
+}
+function calcSuc(){
+  const n=Math.max(1,D.s_n);
+  const porPessoa=D.s_val/n;
+  const qual=porPessoa*(D.s_qual/100);
+  const naoQual=porPessoa-qual;
+  const reduz=D.s_red? qual*.95 : 0;
+  const baseISD=Math.max(0,porPessoa-reduz);
+  const isd=escala(baseISD, D.s_esc?CAT:GERAL);
+  const itcmd=porPessoa*(D.s_itcmd/100);
+  const credito=Math.min(itcmd,isd);
+  const totalPessoa=isd-credito+itcmd;
+  return {n,porPessoa,qual,naoQual,reduz,baseISD,isd,itcmd,credito,
+    totalPessoa,total:totalPessoa*n,ef:D.s_val? (totalPessoa*n)/D.s_val:0};
+}
+
+/* ---------- organigrama ---------- */
+function drawOrg(){
+  const br=calcBR(), es=calcES();
+  const svg=document.getElementById('org');
+  const box=(x,y,w,h,t,s,col,dash)=>`
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(255,255,255,.82)"
+      stroke="${col}" stroke-width="1.5" ${dash?'stroke-dasharray="5 3"':''}/>
+    <text x="${x+w/2}" y="${y+h/2-4}" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif"
+      font-size="14" font-weight="600" fill="#22262B">${t}</text>
+    <text x="${x+w/2}" y="${y+h/2+13}" text-anchor="middle" font-family="JetBrains Mono,monospace"
+      font-size="9.5" fill="#5A6169" letter-spacing="1">${s}</text>`;
+  const line=(x1,y1,x2,y2,col,dash)=>`<path d="M${x1} ${y1} L${x1} ${(y1+y2)/2} L${x2} ${(y1+y2)/2} L${x2} ${y2}"
+      fill="none" stroke="${col}" stroke-width="1.5" ${dash?'stroke-dasharray="4 4"':''}/>`;
+  const tag=(x,y,t,col)=>`
+    <rect x="${x-30}" y="${y-9}" width="60" height="18" fill="#E6E7E2" stroke="${col}" stroke-width="1"/>
+    <text x="${x}" y="${y+4}" text-anchor="middle" font-family="JetBrains Mono,monospace"
+      font-size="9.5" font-weight="700" fill="${col}">${t}</text>`;
+
+  const G='#22262B', E='#1F4E5F', B='#A8541E', L='#9E2B37';
+  let s='';
+  // pais
+  s+=box(40,30,190,54,'Holding dos pais','BRASIL',B,true);
+  s+=`<path d="M135 84 L135 130 L330 130" fill="none" stroke="${L}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  s+=tag(232,130,'ISD+ITCMD',L);
+  // pessoas
+  s+=box(330,105,250,56,'Rafa & Bianca','RESIDENTES FISCAIS · ESPANHA',G);
+  s+=line(455,161,455,205,G);
+  // holdco
+  s+=box(330,205,250,56,'HoldCo SL','HOLDING DE PARTICIPAÇÕES',E);
+  // filhas
+  const ys=330, w=200, h=62;
+  const xs=[30,250,470,690];
+  const kids=[
+    ['DistriCo SL','ALIMENTOS · '+eur(D.dfat),E],
+    ['EventsCo SL','EVENTOS',E],
+    ['TechCo SL',(D.pbox?'PATENT BOX 10%':'IS 25%'),E],
+    ['ConsultCo Ltda','BRASIL · '+brl(D.fat),B]
+  ];
+  kids.forEach((k,i)=>{
+    s+=line(455,261,xs[i]+w/2,ys,G);
+    s+=box(xs[i],ys,w,h,k[0],k[1],k[2]);
+  });
+  // fluxo de dividendo brasil
+  s+=`<path d="M${xs[3]+w/2} ${ys+h} L${xs[3]+w/2} ${ys+h+70} L455 ${ys+h+70} L455 ${ys+h+110}"
+     fill="none" stroke="${L}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  s+=tag(xs[3]+w/2, ys+h+35, 'IRRF 10%', L);
+  s+=box(330,ys+h+110,250,50,'Dividendo líquido na HoldCo',
+    'EXENCIÓN 95% · EFETIVO 1,25%',E);
+  s+=`<text x="990" y="646" text-anchor="end" font-family="JetBrains Mono,monospace"
+      font-size="9" fill="#5A6169" letter-spacing="1">VAZAMENTO ANUAL NA REMESSA · ${brl(br.irrf)}</text>`;
+  svg.innerHTML=s;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const br=calcBR(), es=calcES(), c=calcCost(), su=calcSuc();
+
+  // custos
+  const tb=document.querySelector('#tCost tbody');
+  tb.innerHTML=D.costs.map((r,i)=>`<tr>
+    <td><strong>${r[0]}</strong></td><td style="color:var(--graphite-soft);font-size:13px">${r[1]}</td>
+    <td class="num"><input type="number" data-c="${i}" data-f="2" value="${r[2]}" style="width:82px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="3" value="${r[3]}" style="width:82px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="4" value="${r[4]}" style="width:92px"></td>
+  </tr>`).join('');
+  document.querySelector('#tCost tfoot').innerHTML=`<tr class="total">
+    <td colspan="2">Total mensal</td><td class="num">${eur(c.mn)}</td>
+    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>`;
+  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>recorrente</small>';
+  document.getElementById('cSetup').innerHTML=eur(c.su)+'<small>primeiro ano</small>';
+  document.getElementById('cAno1').innerHTML=eur(c.anoMn+c.su)+'–'+eur(c.anoMx+c.su).replace('€','')+'<small>tudo somado</small>';
+
+  // brasil
+  const p=br.p;
+  const rows=[
+    ['IRPJ 15% sobre presunção de 32%',0,p.irpj],
+    ['Adicional 10% acima de R$240k de base',0,p.adic],
+    ['CSLL 9% sobre presunção',0,p.csll],
+    ['PIS/COFINS cumulativos 3,65%',0,p.pis+p.cofins],
+    ['ISS '+D.iss+'%',0,p.iss],
+    ['CPP sobre folha — 26,8%',0,p.cpp],
+    ['DAS Simples Anexo III',br.s,0],
+    ['IRRF 10% sobre remessa de dividendo',0,br.irrf]
+  ];
+  document.querySelector('#tBr tbody').innerHTML=rows.map(r=>`<tr class="${r[1]||r[2]?'':'sub'}">
+    <td>${r[0]}</td><td class="num">${r[1]?brl(r[1]):'—'}</td>
+    <td class="num">${r[2]?brl(r[2]):'—'}</td>
+    <td class="num" style="color:${r[2]>r[1]?'var(--leak)':'var(--ok)'}">${r[2]-r[1]?brl(r[2]-r[1]):'—'}</td></tr>`).join('');
+  document.querySelector('#tBr tfoot').innerHTML=`<tr class="total">
+    <td>Total</td><td class="num">${brl(br.s)}</td><td class="num">${brl(br.novoTotal)}</td>
+    <td class="num" style="color:var(--leak)">${brl(br.inc)}</td></tr>`;
+
+  document.getElementById('sInc').innerHTML=brl(br.inc)+'<small>≈ '+eur(br.inc/D.fx)+' · inevitável, o Simples deixa de ser opção</small>';
+  document.getElementById('sCarga').innerHTML=pct(br.novoTotal/D.fat)+'<small>contra '+pct(br.s/D.fat)+' hoje</small>';
+  document.getElementById('sTot').innerHTML=eur(br.inc/D.fx+c.anoMx+c.su)+'<small>tributo + compliance + setup</small>';
+
+  // espanha
+  document.querySelector('#tEs tbody').innerHTML=`
+    <tr><td>DistriCo — IS 25%</td><td class="num">${eur(es.dLucro)}</td>
+      <td class="num">${eur(es.dIS)}</td><td class="num">25,0%</td></tr>
+    <tr><td>TechCo — ${D.pbox?'Patent Box':'IS geral'}</td><td class="num">${eur(es.tLucro)}</td>
+      <td class="num">${eur(es.tIS)}</td><td class="num">${D.pbox?'10,0%':'25,0%'}</td></tr>
+    <tr><td>Dividendo BR recebido — exención 95%</td><td class="num">${eur((br.distrib-br.irrf)/D.fx)}</td>
+      <td class="num">${eur((br.distrib-br.irrf)/D.fx*.0125)}</td><td class="num">1,25%</td></tr>`;
+  const esTot=es.dIS+es.tIS+(br.distrib-br.irrf)/D.fx*.0125;
+  document.querySelector('#tEs tfoot').innerHTML=`<tr class="total"><td>Total Espanha</td>
+    <td class="num">—</td><td class="num">${eur(esTot)}</td><td class="num">—</td></tr>`;
+
+  const econPbox = D.pbox? D.tech*.25-es.tIS : 0;
+  document.getElementById('noteBreak').innerHTML= D.tech>0
+    ? `<strong>Patent Box.</strong> Com ${eur(D.tech)} de licenciamento a terceiros, ${D.pbox
+        ? 'a redução de 60% economiza '+eur(econPbox)+' por ano — mais do que todo o compliance recorrente da estrutura.'
+        : 'ativar o Patent Box economizaria '+eur(D.tech*.25-D.tech*.40*.25)+' por ano. Exige que o desenvolvimento aconteça dentro da SL.'}`
+    : `<strong>A TechCo ainda está zerada.</strong> Enquanto o sistema for só ferramenta interna, ela é custo. A pergunta que decide se vale mantê-la: o sistema tem mercado fora dos seus próprios clientes?`;
+
+  // sucessão
+  document.querySelector('#tSuc tbody').innerHTML=`
+    <tr><td>Por donatário (${su.n})</td><td class="num">${eur(su.porPessoa)}</td></tr>
+    <tr class="sub"><td>Parcela empresa familiar</td><td class="num">${eur(su.qual)}</td></tr>
+    <tr class="sub"><td>Redução de 95%</td><td class="num">−${eur(su.reduz)}</td></tr>
+    <tr><td>Base ISD</td><td class="num">${eur(su.baseISD)}</td></tr>
+    <tr><td>ISD Catalunha ${D.s_esc?'· tarifa reduzida':'· escala geral'}</td><td class="num">${eur(su.isd)}</td></tr>
+    <tr><td>ITCMD Brasil ${D.s_itcmd}%</td><td class="num">${eur(su.itcmd)}</td></tr>
+    <tr class="sub"><td>Crédito art. 23 Ley 29/1987</td><td class="num">−${eur(su.credito)}</td></tr>`;
+  document.getElementById('sucTot').textContent=eur(su.total);
+  document.getElementById('sucEf').textContent='CARGA EFETIVA '+pct(su.ef)+
+    ' · SEM A REDUÇÃO DE 95% SERIA '+pct(D.s_val?(function(){
+      const bk=D.s_red;D.s_red=false;const x=calcSuc().ef;D.s_red=bk;return x})():0);
+
+  drawOrg();
+  store.set(KEY,JSON.stringify(D));
+  const t=document.getElementById('toast');
+  t.classList.add('on');clearTimeout(window._t);
+  window._t=setTimeout(()=>t.classList.remove('on'),900);
+}
+
+/* ---------- bindings ---------- */
+const map={i_fat:'fat',i_folha:'folha',i_iss:'iss',i_dist:'dist',i_fx:'fx',
+  i_dfat:'dfat',i_dmarg:'dmarg',i_dret:'dret',i_tech:'tech',i_pbox:'pbox',
+  s_val:'s_val',s_qual:'s_qual',s_itcmd:'s_itcmd',s_n:'s_n',s_esc:'s_esc',s_red:'s_red'};
+Object.entries(map).forEach(([id,k])=>{
+  const el=document.getElementById(id); if(!el) return;
+  if(el.type==='checkbox'){el.checked=!!D[k];el.addEventListener('change',()=>{D[k]=el.checked;render()});}
+  else{el.value=D[k];el.addEventListener('input',()=>{D[k]=parseFloat(el.value)||0;render()});}
+});
+document.addEventListener('input',e=>{
+  const t=e.target; if(t.dataset.c===undefined) return;
+  D.costs[+t.dataset.c][+t.dataset.f]=parseFloat(t.value)||0;
+  const c=calcCost();
+  document.querySelector('#tCost tfoot').innerHTML=`<tr class="total">
+    <td colspan="2">Total mensal</td><td class="num">${eur(c.mn)}</td>
+    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>`;
+  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>recorrente</small>';
+  document.getElementById('cSetup').innerHTML=eur(c.su)+'<small>primeiro ano</small>';
+  document.getElementById('cAno1').innerHTML=eur(c.anoMn+c.su)+'–'+eur(c.anoMx+c.su).replace('€','')+'<small>tudo somado</small>';
+  store.set(KEY,JSON.stringify(D));
+});
+document.querySelectorAll('nav.tabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));
+    b.setAttribute('aria-selected','true');
+    document.querySelectorAll('section[role=tabpanel]').forEach(s=>s.classList.remove('on'));
+    document.getElementById(b.dataset.tab).classList.add('on');
+  });
+});
+render();
+</script>
+</body>
+</html>

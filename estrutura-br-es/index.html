@@ -214,16 +214,17 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--rule);
   <table id="tCost">
     <thead><tr>
       <th>Entidade</th><th>Função</th>
-      <th class="num">Mín €/mês</th><th class="num">Máx €/mês</th><th class="num">Setup €</th>
+      <th class="num">Paga hoje</th><th class="num">Mín €/mês</th><th class="num">Máx €/mês</th><th class="num">Setup €</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot></tfoot>
   </table>
 
   <div class="grid g3" style="margin-top:26px">
-    <div class="card"><h4>Recorrente ano</h4><div class="stat" id="cAno">—</div></div>
+    <div class="card"><h4>Bruto da estrutura</h4><div class="stat" id="cBruto">—</div></div>
+    <div class="card"><h4>Incremental / ano</h4><div class="stat leak" id="cAno">—</div></div>
     <div class="card"><h4>Setup one-off</h4><div class="stat" id="cSetup">—</div></div>
-    <div class="card"><h4>Ano 1 total</h4><div class="stat" id="cAno1">—</div></div>
+    <div class="card"><h4>Ano 1 incremental</h4><div class="stat" id="cAno1">—</div></div>
   </div>
 
   <div class="note"><strong>O que ficou de fora, de propósito.</strong> A sociedade patrimonial. Ela só se paga com carteira de aluguel real, e nenhum dos dois imóveis atuais deve entrar em sociedade: a casa de Arbúcies perde a isenção de vivienda habitual e gera retribución en especie pelo uso; o apartamento hipotecado dispara ITP/AJD e plusvalía, além de depender de anuência do banco.</div>
@@ -357,12 +358,12 @@ const D={
   dfat:600000, dmarg:10, dret:50, tech:0, pbox:false,
   s_val:500000, s_qual:70, s_itcmd:4, s_n:2, s_esc:true, s_red:true,
   costs:[
-    ['HoldCo SL','Holding de participações',100,200,3500],
-    ['DistriCo SL','Distribuidora — gestoría + laboral',300,600,3000],
-    ['EventsCo SL','Eventos',80,150,2000],
-    ['TechCo SL','Licenciamento do sistema',80,150,2500],
-    ['ConsultCo Ltda','Lucro presumido + sócio não residente',200,450,3500],
-    ['Assessoria','Operaciones vinculadas, Modelo 232, consolidação',150,300,6000]
+    ['HoldCo SL','Holding de participações — nova',100,200,3500,0],
+    ['DistriCo SL','Distribuidora — gestoría + laboral',300,600,3000,90],
+    ['EventsCo SL','Eventos — já existe e roda',80,150,0,115],
+    ['TechCo SL','Licenciamento do sistema — nova, opcional',80,150,2500,0],
+    ['ConsultCo Ltda','Presumido + RDE-IED + representante legal',200,450,3500,100],
+    ['Assessoria','Operaciones vinculadas, Modelo 232, consolidação',150,300,6000,0]
   ]
 };
 Object.assign(D, JSON.parse(store.get(KEY)||'{}'));
@@ -406,9 +407,10 @@ function calcES(){
   return {dLucro,dIS,tLucro,tIS};
 }
 function calcCost(){
-  let mn=0,mx=0,su=0;
-  D.costs.forEach(c=>{mn+=+c[2];mx+=+c[3];su+=+c[4]});
-  return {mn,mx,su,anoMn:mn*12,anoMx:mx*12};
+  let mn=0,mx=0,su=0,at=0;
+  D.costs.forEach(c=>{mn+=+c[2];mx+=+c[3];su+=+c[4];at+=+(c[5]||0)});
+  const iMn=Math.max(0,mn-at), iMx=Math.max(0,mx-at);
+  return {mn,mx,su,at,iMn,iMx,anoMn:iMn*12,anoMx:iMx*12,brutoAno:mx*12};
 }
 
 /* ---------- sucessão ---------- */
@@ -498,14 +500,19 @@ function render(){
   const tb=document.querySelector('#tCost tbody');
   tb.innerHTML=D.costs.map((r,i)=>`<tr>
     <td><strong>${r[0]}</strong></td><td style="color:var(--graphite-soft);font-size:13px">${r[1]}</td>
-    <td class="num"><input type="number" data-c="${i}" data-f="2" value="${r[2]}" style="width:82px"></td>
-    <td class="num"><input type="number" data-c="${i}" data-f="3" value="${r[3]}" style="width:82px"></td>
-    <td class="num"><input type="number" data-c="${i}" data-f="4" value="${r[4]}" style="width:92px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="5" value="${r[5]||0}" style="width:74px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="2" value="${r[2]}" style="width:74px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="3" value="${r[3]}" style="width:74px"></td>
+    <td class="num"><input type="number" data-c="${i}" data-f="4" value="${r[4]}" style="width:84px"></td>
   </tr>`).join('');
   document.querySelector('#tCost tfoot').innerHTML=`<tr class="total">
-    <td colspan="2">Total mensal</td><td class="num">${eur(c.mn)}</td>
-    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>`;
-  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>recorrente</small>';
+    <td colspan="2">Total mensal</td><td class="num">${eur(c.at)}</td><td class="num">${eur(c.mn)}</td>
+    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>
+    <tr class="sub"><td colspan="2">Incremental sobre o que já se paga</td><td class="num">—</td>
+    <td class="num" style="color:var(--leak)">${eur(c.iMn)}</td>
+    <td class="num" style="color:var(--leak)">${eur(c.iMx)}</td><td class="num">—</td></tr>`;
+  document.getElementById('cBruto').innerHTML=eur(c.brutoAno)+'<small>manter tudo de pé</small>';
+  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>o que realmente sobe</small>';
   document.getElementById('cSetup').innerHTML=eur(c.su)+'<small>primeiro ano</small>';
   document.getElementById('cAno1').innerHTML=eur(c.anoMn+c.su)+'–'+eur(c.anoMx+c.su).replace('€','')+'<small>tudo somado</small>';
 
@@ -587,9 +594,13 @@ document.addEventListener('input',e=>{
   D.costs[+t.dataset.c][+t.dataset.f]=parseFloat(t.value)||0;
   const c=calcCost();
   document.querySelector('#tCost tfoot').innerHTML=`<tr class="total">
-    <td colspan="2">Total mensal</td><td class="num">${eur(c.mn)}</td>
-    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>`;
-  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>recorrente</small>';
+    <td colspan="2">Total mensal</td><td class="num">${eur(c.at)}</td><td class="num">${eur(c.mn)}</td>
+    <td class="num">${eur(c.mx)}</td><td class="num">${eur(c.su)}</td></tr>
+    <tr class="sub"><td colspan="2">Incremental sobre o que já se paga</td><td class="num">—</td>
+    <td class="num" style="color:var(--leak)">${eur(c.iMn)}</td>
+    <td class="num" style="color:var(--leak)">${eur(c.iMx)}</td><td class="num">—</td></tr>`;
+  document.getElementById('cBruto').innerHTML=eur(c.brutoAno)+'<small>manter tudo de pé</small>';
+  document.getElementById('cAno').innerHTML=eur(c.anoMn)+'–'+eur(c.anoMx).replace('€','')+'<small>o que realmente sobe</small>';
   document.getElementById('cSetup').innerHTML=eur(c.su)+'<small>primeiro ano</small>';
   document.getElementById('cAno1').innerHTML=eur(c.anoMn+c.su)+'–'+eur(c.anoMx+c.su).replace('€','')+'<small>tudo somado</small>';
   store.set(KEY,JSON.stringify(D));
